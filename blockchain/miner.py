@@ -23,8 +23,20 @@ def proof_of_work(last_proof):
     start = timer()
 
     print("Searching for next proof")
-    proof = 0
-    #  TODO: Your code here
+
+    # random seed
+    proof = random.randint(0, 2**13+1)
+
+    # encode as a string
+    last_encoded = str(last_proof).encode()
+
+    # sha256 hash
+    last_hash = hashlib.sha256(last_encoded).hexdigest()
+
+    # increment until valid_proof is found
+    while valid_proof(last_hash, proof) is False:
+        proof += 1
+
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
@@ -39,8 +51,14 @@ def valid_proof(last_hash, proof):
     IE:  last_hash: ...AE912345, new hash 12345E88...
     """
 
-    # TODO: Your code here!
-    pass
+    # encode proof
+    guess_encoded = str(proof).encode()
+
+    # sha256 hash
+    guess_hash = hashlib.sha256(guess_encoded).hexdigest()
+    
+    # return boolean
+    return guess_hash[:5] == last_hash[-5:]
 
 
 if __name__ == '__main__':
@@ -61,6 +79,7 @@ if __name__ == '__main__':
     if id == 'NONAME\n':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()
+
     # Run forever until interrupted
     while True:
         # Get the last proof from the server
